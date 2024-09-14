@@ -5,12 +5,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://tscpedrolima:bX96sS7Mq3V6kGIa@cluster0.uvhjo.mongodb.net/',
-    ),
-    UsersModule,
-  ],
+  imports: [MongooseModule.forRoot(process.env.MONGO_API_KEY), UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })
