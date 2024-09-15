@@ -1,33 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserDocument } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   create(createUserDto: CreateUserDto) {
-    const user = new this.userModel(createUserDto);
-    return user.save();
+    const user = new this.prisma.users(createUserDto);
+    return {
+      ...user,
+      password: undefined,
+    };
   }
 
   findAll() {
-    return this.userModel.find();
+    return this.prisma.users.find();
   }
 
   findOne(id: string) {
-    return this.userModel.findById(id);
+    return this.prisma.users.findById(id);
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
-    return this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true });
+    return this.prisma.users.findByIdAndUpdate(id, updateUserDto, {
+      new: true,
+    });
   }
 
   remove(id: string) {
-    return this.userModel
+    return this.prisma.users
       .deleteOne({
         _id: id,
       })
